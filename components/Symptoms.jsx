@@ -1,4 +1,6 @@
+
 "use client";
+
 import { useState } from 'react';
 import { symptoms, symptoms as SYMPTOMS } from "@/utils/disease"; // ✅ Correct import
 
@@ -23,6 +25,7 @@ const SymptomAnalysis = () => {
   };
 
   return (
+
     <div className="min-h-screen flex items-center justify-center p-6 ">
       <div className="max-w-4xl w-full rounded-3xl p-8 ">
         <h2 className="text-3xl font-bold text-purple-700 mb-4 text-center">Symptom Analysis</h2>
@@ -35,6 +38,7 @@ const SymptomAnalysis = () => {
           placeholder="Type a symptom..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+
           className="w-full border-2 border-purple-600 p-3 rounded-full mb-4 focus:border-purple-600 text-black"
         />
 
@@ -58,6 +62,7 @@ const SymptomAnalysis = () => {
 
         <div className="flex flex-wrap gap-3 mb-6 border p-4 rounded-lg bg-purple-50 min-h-[60px]">
           {selectedSymptoms.map((symptom) => (
+
             <div key={symptom} className="bg-purple-300 text-purple-900 px-4 py-2 rounded-full flex items-center gap-2">
               {formatSymptom(symptom)}
               <button onClick={() => removeSymptom(symptom)} className="font-bold text-purple-900">×</button>
