@@ -11,6 +11,10 @@ const DoctorConsult = () => {
 
   const specialisations = [...new Set(doctorsData.map((doc) => doc.specialisation))];
 
+  const handleSeeTimings = (doctorName) => {
+    alert(`See timings for ${doctorName}`);
+  };
+
   return (
     <div className="p-6 bg-purple-100 rounded-lg">
       <h2 className="text-3xl font-bold text-purple-800 mb-4">Consult Doctor</h2>
@@ -37,7 +41,7 @@ const DoctorConsult = () => {
             <img
               src={doctor.imageUri}
               alt={doctor.name}
-              className="w-32 h-32 object-cover"
+              className="w-33 h-55 object-cover"
             />
             <div className="p-4 flex flex-col justify-between">
               <div>
@@ -56,6 +60,12 @@ const DoctorConsult = () => {
                   <FaStar key={`empty-${i}`} className="text-gray-300" />
                 ))}
               </div>
+              <button
+                onClick={() => handleSeeTimings(doctor.name)}
+                className="mt-4 bg-purple-600 text-white py-2 px-4 rounded-lg shadow hover:bg-purple-700 transition"
+              >
+                See All Timings
+              </button>
             </div>
           </div>
         ))}
