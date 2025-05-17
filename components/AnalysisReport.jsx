@@ -47,9 +47,9 @@ const AnalysisReport = ({ prediction, setPrediction }) => {
 
       {/* Full-Screen Modal */}
       {selectedDisease && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center wi">
+        <div className="fixed min-h-screen inset-0 z-50 flex items-center justify-center wi">
           {/* Blurred Background */}
-          <div className="absolute inset-0 bg-black bg-opacity-40 backdrop-blur-sm"></div>
+          <div className="absolute inset-0 w-[] bg-opacity-40 backdrop-blur-sm"></div>
 
           {/* Modal Content */}
           <div className="relative bg-white w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl p-8 z-50">
