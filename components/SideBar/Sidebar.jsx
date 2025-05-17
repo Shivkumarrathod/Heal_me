@@ -1,14 +1,14 @@
 'use client';
-import React, { useState } from 'react';
-import { Menu, Home, HeartPulse, Image, Bot, Stethoscope } from 'lucide-react';
+import { Bot, HeartPulse, Home, Image, Menu, Stethoscope } from 'lucide-react';
+import { useState } from 'react';
+import AIConsult from '../AIConsult';
+import DoctorConsult from '../DoctorConsult';
+import HomeCard from '../HomeCard';
+import ImageDiagno from '../ImageDiagno';
+import Symptoms from '../Symptoms';
 import SidebarHeader from './SidebarHeader';
 import SidebarMenu from './SidebarMenu';
 import UserCard from './UserCard';
-import HomeCard from '../HomeCard'
-import DoctorConsult from '../DoctorConsult';
-import AIConsult from '../AIConsult';
-import ImageDiagno from '../ImageDiagno';
-import Symptoms from '../Symptoms';
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);

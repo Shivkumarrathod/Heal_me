@@ -1,7 +1,6 @@
 "use client";
-
-import { useState } from "react";
 import { symptoms as SYMPTOMS } from "@/utils/disease";
+import { useState } from "react";
 
 const SymptomAnalysis = () => {
   const [query, setQuery] = useState("");
