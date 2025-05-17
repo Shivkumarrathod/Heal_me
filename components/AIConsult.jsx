@@ -7,6 +7,15 @@ const AIConsult = () => {
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef(null);
 
+  useEffect(() => {
+    const savedMessages = localStorage.getItem('aiConsultMessages');
+    if (savedMessages) setMessages(JSON.parse(savedMessages));
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('aiConsultMessages', JSON.stringify(messages));
+  }, [messages]);
+
   const handleSend = async () => {
     if (!userInput.trim() || loading) return;
 
@@ -15,18 +24,15 @@ const AIConsult = () => {
     setUserInput('');
     setLoading(true);
 
-    const aiReplyRaw = await getAIReply(userInput);
+    const aiReplyRaw = await getAIReply(newMessages);
 
-    // Typing effect: add AI message letter by letter
     let currentText = '';
     let i = 0;
 
     const addLetter = () => {
       if (i < aiReplyRaw.length) {
         currentText += aiReplyRaw[i];
-        // Replace last AI message or add new
         setMessages((prev) => {
-          // Check if last message is AI and typing in progress
           if (prev.length > 0 && prev[prev.length - 1].type === 'ai' && prev[prev.length - 1].typing) {
             const updated = [...prev];
             updated[updated.length - 1] = { type: 'ai', text: currentText, typing: true };
@@ -36,9 +42,8 @@ const AIConsult = () => {
           }
         });
         i++;
-        setTimeout(addLetter, 5); // Adjust typing speed here (ms per letter)
+        setTimeout(addLetter, 5);
       } else {
-        // Finish typing
         setMessages((prev) => {
           const updated = [...prev];
           updated[updated.length - 1] = { type: 'ai', text: currentText, typing: false };
@@ -51,178 +56,149 @@ const AIConsult = () => {
     addLetter();
   };
 
- async function getAIReply(userInput) {
-  const apiKey = 'AIzaSyAbuuBezNjy6BVNBcMJqJbxZR0MvfDUvNo'; // Replace with your actual Gemini API key
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+  async function getAIReply(allMessages) {
+    const apiKey = 'AIzaSyAbuuBezNjy6BVNBcMJqJbxZR0MvfDUvNo';
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
-  // Healthcare-focused prompt, including disclaimer
-      const prompt = `
-You are a helpful and concise healthcare assistant. Respond in 5-10 short sentences with clear, simple language and give it in point wise.
+    const contextMessages = allMessages
+      .slice(-10) // Last 10 messages (5 user/AI turns)
+      .map((msg) => `${msg.type === 'user' ? 'User' : 'AI'}: ${msg.text}`)
+      .join('\n');
 
-Important: This AI does not replace professional medical advice. Always consult a doctor for diagnosis and treatment. keep disclaimer in one sentence
+    const prompt = `
+      You are a helpful and concise AI healthcare assistant. Use the previous conversation for context and continuity.
 
-User: ${userInput}
-AI:
-`;
+      - Provide clear, relevant, and empathetic responses.
+      - For simple or brief user inputs (e.g., greetings, small talk), respond briefly without adding any disclaimers.
+      - For medical or health-related questions, respond with up to 15 short sentences, using bullet points for advice and numbered lists for steps or precautions.
+      - Always end health-related responses with:
+        "Note: This AI does not replace professional medical advice."
 
+      Previous conversation:
+      ${contextMessages}
 
-      const payload = {
-        contents: [{ parts: [{ text: prompt }] }],
-      };
+      User: ${userInput}
 
-      try {
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        });
+      AI:
+    `;
 
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    const payload = {
+      contents: [{ parts: [{ text: prompt }] }],
+    };
 
-        const data = await response.json();
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
 
-        const aiText = data?.candidates?.[0]?.content?.parts?.[0]?.text || 'No response from AI.';
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
-        // Basic formatting — keep plain text for typing effect
-        const formatted = aiText
-          .replace(/\*\*(.*?)\*\*/g, '$1')
-          .replace(/\*(.*?)\*/g, '$1')
-          .replace(/(?:\r\n|\r|\n)/g, '\n');
-
-        return formatted;
-      } catch (error) {
-        console.error('Error fetching from Gemini:', error);
-        return 'Failed to get response from AI.';
-      }
+      const data = await response.json();
+      let aiText = data?.candidates?.[0]?.content?.parts?.[0]?.text || 'No response from AI.';
+      aiText = aiText.replace(/\*\*(.*?)\*\*/g, '$1').replace(/\*(.*?)\*/g, '$1');
+      const lines = aiText.split(/\r?\n/).filter(Boolean);
+      return lines.slice(0, 30).join('\n');
+    } catch (error) {
+      console.error('Error fetching from Gemini:', error);
+      return 'Failed to get response from AI.';
     }
-
+  }
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
   return (
-    <>
-      <style>{`
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;
-        }
-        .scrollbar-hide {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-        /* Loading dots animation */
-        .loading-dots span {
-          animation: blink 1.4s infinite;
-          font-weight: bold;
-          font-size: 24px;
-        }
-        .loading-dots span:nth-child(2) {
-          animation-delay: 0.2s;
-        }
-        .loading-dots span:nth-child(3) {
-          animation-delay: 0.4s;
-        }
-        @keyframes blink {
-          0%, 20% { opacity: 0; }
-          50% { opacity: 1; }
-          100% { opacity: 0; }
-        }
-      `}</style>
+    <div className="flex flex-col h-screen items-center relative">
+      <div
+        className="p-6 space-y-4 overflow-y-auto"
+        style={{
+          height: '80%',
+          width: '60%',
+          scrollbarWidth: 'none', // Firefox
+          msOverflowStyle: 'none', // IE 10+
+        }}
+      >
+        <style>
+          {`
+            div::-webkit-scrollbar {
+              display: none;
+            }
+          `}
+        </style>
 
-      <div className="flex flex-col h-screen items-center">
-        <div className="p-6 space-y-4 overflow-y-auto scrollbar-hide" style={{ height: '80%', width: '60%' }}>
-          {messages.length === 0 ? (
-            <div className="flex flex-col items-center justify-center w-full h-full space-y-6">
-              <div className="bg-purple-100 text-purple-900 rounded-xl p-6 shadow text-center max-w-md w-full">
-                <h3 className="font-semibold mb-2 text-lg">How do you search?</h3>
-                <p className="text-sm">
-                  Simply type your health-related query in the chat box below and hit send.
-                  The AI will analyze your question and provide insights, suggestions, or steps you can take next.
-                </p>
-              </div>
-              <div className="bg-purple-100 text-purple-900 rounded-xl p-6 shadow text-center max-w-md w-full">
-                <h3 className="font-semibold mb-2 text-lg">What can you search?</h3>
-                <p className="text-sm">
-                  Explore symptoms, possible causes, medications, treatments, mental health tips, diet plans,
-                  and get support for chronic illnesses. Your AI consultant is here 24/7.
-                </p>
-              </div>
-              <div className="bg-purple-100 text-purple-900 rounded-xl p-6 shadow text-center max-w-md w-full">
-                <h3 className="font-semibold mb-2 text-lg">Stay Motivated</h3>
-                <p className="text-sm">
-                  Your health journey starts with a single question.
-                  Stay curious, stay informed, and take charge of your wellbeing with confidence.
-                </p>
-              </div>
+        {messages.length === 0 ? (
+          <div className="flex flex-col items-center justify-center w-full h-full space-y-6">
+            <div className="bg-purple-100 text-purple-900 rounded-xl p-6 shadow text-center max-w-md w-full">
+              <h3 className="font-semibold mb-2 text-lg">How do you search?</h3>
+              <p className="text-sm">Type your health-related query and hit send. The AI provides insights or next steps.</p>
             </div>
-          ) : (
-            <>
-              {messages.map((msg, index) => (
-                <div
-                  key={index}
-                  className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div
-                    className={`p-4 rounded-xl shadow break-words whitespace-pre-wrap ${
-                      msg.type === 'user'
-                        ? 'bg-purple-600 text-white text-right'
-                        : 'bg-purple-100 text-purple-900 text-left'
-                    }`}
-                    style={{ maxWidth: '100%', width: 'auto', display: 'inline-block' }}
-                  >
-                    {msg.type === 'ai' ? (
-                      msg.typing ? (
-                        <>
-                          {msg.text}
-                          <span className="loading-dots">
-                            <span>.</span>
-                            <span>.</span>
-                            <span>.</span>
-                          </span>
-                        </>
-                      ) : (
-                        msg.text
-                      )
-                    ) : (
-                      msg.text
-                    )}
-                  </div>
-                </div>
-              ))}
-              <div ref={messagesEndRef} />
-            </>
-          )}
-        </div>
-
-        <div className="h-[20%] flex justify-center items-center w-full">
-          <div className="relative w-1/2">
-            <input
-              type="text"
-              value={userInput}
-              onChange={(e) => setUserInput(e.target.value)}
-              placeholder="Ask your AI health consultant..."
-              className="w-full bg-purple-50 border border-purple-300 rounded-full pl-5 pr-12 py-3 focus:outline-none focus:ring focus:border-purple-500 placeholder-purple-400 text-purple-900"
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  handleSend();
-                }
-              }}
-              disabled={loading}
-            />
-            <button
-              onClick={handleSend}
-              className={`absolute right-3 top-1/2 transform -translate-y-1/2 text-purple-600 hover:text-purple-800 ${
-                loading ? 'opacity-50 cursor-not-allowed' : ''
-              }`}
-              disabled={loading}
-            >
-              <IoIosSend size={24} />
-            </button>
+            <div className="bg-purple-100 text-purple-900 rounded-xl p-6 shadow text-center max-w-md w-full">
+              <h3 className="font-semibold mb-2 text-lg">What can you ask?</h3>
+              <p className="text-sm">Ask about symptoms, causes, medications, treatments, mental health tips, or diet plans.</p>
+            </div>
+            <div className="bg-purple-100 text-purple-900 rounded-xl p-6 shadow text-center max-w-md w-full">
+              <h3 className="font-semibold mb-2 text-lg">Stay Curious</h3>
+              <p className="text-sm">Take charge of your health with knowledge. One question can start the journey.</p>
+            </div>
           </div>
+        ) : (
+          <>
+            {messages.map((msg, index) => (
+              <div key={index} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div
+                  className={`p-4 rounded-xl shadow break-words whitespace-pre-wrap ${
+                    msg.type === 'user'
+                      ? 'bg-purple-600 text-white text-right'
+                      : 'bg-purple-100 text-purple-900 text-left'
+                  }`}
+                  style={{ maxWidth: '100%', width: 'auto', display: 'inline-block' }}
+                >
+                  {msg.type === 'ai' && msg.typing ? (
+                    <>
+                      {msg.text}
+                      <em style={{ marginLeft: '8px', fontStyle: 'normal', color: '#6B46C1' }}>
+                        AI is typing...
+                      </em>
+                    </>
+                  ) : (
+                    msg.text
+                  )}
+                </div>
+              </div>
+            ))}
+            <div ref={messagesEndRef} />
+          </>
+        )}
+      </div>
+
+      <div className="h-[20%] flex justify-center items-center w-full">
+        <div className="relative w-1/2">
+          <input
+            type="text"
+            value={userInput}
+            onChange={(e) => setUserInput(e.target.value)}
+            placeholder="Ask your AI health consultant..."
+            className="w-full bg-purple-50 border border-purple-300 rounded-full pl-5 pr-12 py-3 focus:outline-none focus:ring focus:border-purple-500 placeholder-purple-400 text-purple-900"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') handleSend();
+            }}
+            disabled={loading}
+          />
+          <button
+            onClick={handleSend}
+            className={`absolute right-3 top-1/2 transform -translate-y-1/2 text-purple-600 hover:text-purple-800 ${
+              loading ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
+            disabled={loading}
+          >
+            <IoIosSend size={24} />
+          </button>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
