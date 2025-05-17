@@ -1,71 +1,67 @@
-'use client'
-import React, { useState } from "react";
-import DoctorCard from './DoctorDetails';
+import { useState } from "react";
+import { FaStar } from "react-icons/fa";
+import doctorsData from "./doctorsData";
 
 const DoctorConsult = () => {
-  const allDoctors = [
-    {
-      imageUri: "https://via.placeholder.com/150",
-      name: "Dr. Shiv Kumar",
-      specialisation: "Cardiologist",
-      experience: "10 years",
-      address: "123, Health Street, Bangalore",
-    },
-    {
-      imageUri: "https://via.placeholder.com/150",
-      name: "Dr. Priya Sharma",
-      specialisation: "Dermatologist",
-      experience: "8 years",
-      address: "456, Skin Avenue, Mumbai",
-    },
-    {
-      imageUri: "https://via.placeholder.com/150",
-      name: "Dr. Raj Mehra",
-      specialisation: "Orthopedic",
-      experience: "12 years",
-      address: "789, Bone Road, Delhi",
-    },
-    {
-      imageUri: "https://via.placeholder.com/150",
-      name: "Dr. Sneha Verma",
-      specialisation: "Cardiologist",
-      experience: "9 years",
-      address: "101, Heart Lane, Chennai",
-    },
-  ];
+  const [filter, setFilter] = useState("");
 
-  const [filter, setFilter] = useState("All");
+  const filteredDoctors = filter
+    ? doctorsData.filter((doc) => doc.specialisation === filter)
+    : doctorsData;
 
-  const filteredDoctors =
-    filter === "All" ? allDoctors : allDoctors.filter((doc) => doc.specialisation === filter);
-
-  const specialisations = ["All", ...new Set(allDoctors.map((doc) => doc.specialisation))];
+  const specialisations = [...new Set(doctorsData.map((doc) => doc.specialisation))];
 
   return (
-    <div className="p-6 space-y-6">
-      <h2 className="text-2xl font-bold text-blue-600">Find Doctors</h2>
+    <div className="p-6 bg-purple-100 rounded-lg">
+      <h2 className="text-3xl font-bold text-purple-800 mb-4">Consult Doctor</h2>
 
-      <div className="flex space-x-4">
+      <select
+        value={filter}
+        onChange={(e) => setFilter(e.target.value)}
+        className="py-2 px-4 mb-6 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 text-black"
+      >
+        <option value="">Select a filter</option>
         {specialisations.map((spec) => (
-          <button
-            key={spec}
-            onClick={() => setFilter(spec)}
-            className={`px-4 py-2 rounded-full  ${
-              filter === spec ? "bg-purple-600 text-white" : "bg-white text-purple-600"
-            }`}
-          >
+          <option key={spec} value={spec}>
             {spec}
-          </button>
+          </option>
         ))}
-      </div>
+      </select>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {filteredDoctors.map((doctor, index) => (
-          <DoctorCard key={index} doctor={doctor} />
+      <div className="space-y-4">
+        {filteredDoctors.map((doctor) => (
+          <div
+            key={doctor.id}
+            className="flex bg-white rounded-lg shadow-md overflow-hidden"
+          >
+            <img
+              src={doctor.imageUri}
+              alt={doctor.name}
+              className="w-32 h-32 object-cover"
+            />
+            <div className="p-4 flex flex-col justify-between">
+              <div>
+                <h3 className="text-xl font-semibold text-gray-900">
+                  {doctor.name}
+                </h3>
+                <p className="text-purple-600">{doctor.specialisation}</p>
+                <p className="text-gray-600">{doctor.experience}</p>
+                <p className="text-gray-500">{doctor.address}</p>
+              </div>
+              <div className="mt-2 flex items-center">
+                {[...Array(doctor.rating)].map((_, i) => (
+                  <FaStar key={i} className="text-yellow-500" />
+                ))}
+                {[...Array(5 - doctor.rating)].map((_, i) => (
+                  <FaStar key={`empty-${i}`} className="text-gray-300" />
+                ))}
+              </div>
+            </div>
+          </div>
         ))}
       </div>
     </div>
   );
-}
+};
 
 export default DoctorConsult;
