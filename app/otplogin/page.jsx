@@ -85,21 +85,36 @@ function Page() { // ✅ Capitalized component
   };
 
   const verifyOtp = async () => {
-    if (confirmationResult) {
-      confirmationResult
-        .confirm(otp)
-        .then((res) => {
-          alert(`Phone number verified! Welcome ${res.user.phoneNumber}`);
-          router.push('/');
-        })
-        .catch((err) => {
-          console.error(err);
-          setMessage("Incorrect OTP, please try again.");
-        });
-    } else {
-      setMessage("Please request the OTP first.");
-    }
-  };
+  if (!confirmationResult) {
+    setMessage("Please request the OTP first.");
+    return;
+  }
+
+  try {
+    const res = await confirmationResult.confirm(otp);
+    const phoneNumber = res.user.phoneNumber;
+
+    const response = await fetch("http://localhost:8000/register/user", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        phone: phoneNumber
+      })
+    });
+
+    const data = await response.json();
+    localStorage.setItem("phone",phoneNumber)
+    console.log("Server response:", data);
+
+    router.push('/');
+  } catch (err) {
+    console.error(err);
+    setMessage("Incorrect OTP, please try again.");
+  }
+};
+
 
   return (
     <div className="min-h-screen flex flex-col lg:flex-row bg-blue-800 ">

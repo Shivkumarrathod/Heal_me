@@ -1,4 +1,4 @@
-from fastapi import FastAPI,HTTPException
+from fastapi import FastAPI,HTTPException,Path
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List
@@ -48,6 +48,7 @@ class SymptomInput(BaseModel):
 async def root():
     return {"message": "FastAPI server running with MongoDB connected"}
 
+#--------------------------------Model-----------------------------------------------------
 @app.post("/predict")
 async def predict_disease(data: SymptomInput):
     input_symptoms = [s.strip().lower() for s in data.symptoms]
@@ -74,8 +75,8 @@ async def predict_disease(data: SymptomInput):
             "description": description,
             "precautions": precautions
         })
-    return {"predictions": results}
-
+    return {"predictions":results}
+#---------------------------------------------User-------------------------------------------------------
 @app.post("/register/user")
 async def register_user(user: UserSchema):
     existing = await db.users.find_one({"phone": user.phone})
@@ -83,6 +84,37 @@ async def register_user(user: UserSchema):
         return {"message": "User already registered"}
     await db.users.insert_one(user.dict())
     return {"message": "User registered successfully"}
+from fastapi import HTTPException
+
+@app.get("/user/{phone}")
+async def get_user_by_phone(phone: str):
+    user = await db.users.find_one({"phone": phone})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    user["_id"] = str(user["_id"])  # Convert ObjectId to string for JSON serialization
+    return {"user": user}
+
+@app.put("/user/{phone}")
+async def update_user_profile(phone: str = Path(..., example="9876543210"), user: UserSchema = ...):
+    existing_user = await db.users.find_one({"phone": phone})
+    if not existing_user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    # Prepare dict with fields to update, ignoring phone because it's identifier
+    update_data = user.dict(exclude_unset=True, exclude={"phone"})
+    
+    # Optional: preserve original created_at if not sent in update
+    if "created_at" not in update_data:
+        update_data["created_at"] = existing_user.get("created_at", datetime.utcnow())
+
+    await db.users.update_one({"phone": phone}, {"$set": update_data})
+    updated_user = await db.users.find_one({"phone": phone})
+    updated_user["_id"] = str(updated_user["_id"])
+
+    return {"message": "User profile updated successfully", "user": updated_user}
+
+#-------------------------------------Doctor-----------------------------------------------
 
 @app.post("/register/doctor")
 async def register_doctor(doctor: DoctorSchema):
@@ -91,3 +123,21 @@ async def register_doctor(doctor: DoctorSchema):
         raise HTTPException(status_code=400, detail="Doctor already exists")
     await db.doctors.insert_one(doctor.dict())
     return {"message": "Doctor registered successfully"}
+
+@app.get("/doctors")
+async def get_all_doctors():
+    doctors_cursor = db.doctors.find()
+    doctors = []
+    async for doctor in doctors_cursor:
+        doctor["_id"] = str(doctor["_id"])  # Convert ObjectId to string
+        doctors.append(doctor)
+    return {"doctors": doctors}
+
+@app.get("/doctor/email/{email}")
+async def get_doctor_by_email(email: str):
+    doctor = await db.doctors.find_one({"email": email})
+    if not doctor:
+        raise HTTPException(status_code=404, detail="Doctor not found")
+    
+    doctor["_id"] = str(doctor["_id"])
+    return {"doctor": doctor}

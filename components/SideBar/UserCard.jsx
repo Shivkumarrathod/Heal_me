@@ -8,17 +8,24 @@ import { useRouter } from 'next/navigation';
 const UserCard = ({ isLight }) => {
   const [user, setUser] = useState(null);
   const router = useRouter();
-
+  const [phone,setPhone] = useState('')
+  
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
     });
+    const phoneNumber = localStorage.getItem("phone");
+    console.log(phoneNumber);
+    
+    setPhone(phoneNumber)
     return () => unsubscribe();
   }, []);
 
   const handleClick = () => {
     if (!user) {
       router.push('/otplogin');
+    }else{
+      router.push(`/profile/${phone}`)
     }
   };
 
