@@ -57,14 +57,14 @@ const AIConsult = () => {
 
   // Healthcare-focused prompt, including disclaimer
       const prompt = `
-        You are a knowledgeable healthcare consultant AI assistant. Provide clear, accurate, and compassionate medical information and advice based on the user's query.
-        Include possible causes, treatment options, and helpful suggestions.
+You are a helpful and concise healthcare assistant. Respond in 5-10 short sentences with clear, simple language and give it in point wise.
 
-        Important: This AI does not replace professional medical advice. Always consult a healthcare provider for diagnosis and treatment.
+Important: This AI does not replace professional medical advice. Always consult a doctor for diagnosis and treatment. keep disclaimer in one sentence
 
-        User: ${userInput}
-        AI:
-      `;
+User: ${userInput}
+AI:
+`;
+
 
       const payload = {
         contents: [{ parts: [{ text: prompt }] }],

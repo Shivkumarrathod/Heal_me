@@ -5,23 +5,31 @@ from typing import List
 import joblib
 import numpy as np
 import tensorflow as tf
+import pandas as pd
 
-# === Load model and encoders ===
+# Load descriptions CSV and create lowercase key dict with stripped keys
+desc_df = pd.read_csv("symptom_Description[1].csv")
+desc_dict = dict(zip(desc_df['Disease'].str.lower().str.strip(), desc_df['Description']))
+
+# Load precautions CSV and create lowercase key dict with stripped keys
+prec_df = pd.read_csv("symptom_precaution[1].csv")
+prec_dict = {
+    row['Disease'].lower().strip(): [row['Precaution_1'], row['Precaution_2'], row['Precaution_3'], row['Precaution_4']]
+    for _, row in prec_df.iterrows()
+}
+
+# Load your ML model and encoders
 model = tf.keras.models.load_model("disease_prediction_model.h5")
 mlb = joblib.load("symptom_encoder.joblib")
 le = joblib.load("label_encoder.joblib")
 
-# === FastAPI app instance ===
 app = FastAPI(
     title="Symptom Analysis & Disease Prediction API",
     description="Backend API for symptom analysis and disease prediction with CORS enabled",
     version="1.0.0",
 )
 
-# === CORS configuration ===
-origins = [
-    "*"  # Allow all origins - change in production for security
-]
+origins = ["*"]  # Allow all origins for now; restrict in production
 
 app.add_middleware(
     CORSMiddleware,
@@ -31,26 +39,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# === Request body structure ===
 class SymptomInput(BaseModel):
     symptoms: List[str]
 
-# === Health check endpoint ===
 @app.get("/")
 async def root():
     return {"message": "FastAPI server is running with CORS enabled"}
 
-# === Symptom analysis (dummy example) ===
-@app.post("/analyze-symptoms/")
-async def analyze_symptoms(symptoms: List[str]):
-    symptoms_lower = [s.lower().strip() for s in symptoms]
-    if "fever" in symptoms_lower or "cough" in symptoms_lower:
-        return {"prediction": "Possible Flu or Infection", "status": "Preliminary"}
-    return {"prediction": "Unable to determine", "status": "Insufficient data"}
-
-# === Disease prediction endpoint ===
 @app.post("/predict")
 async def predict_disease(data: SymptomInput):
+    # Normalize input symptoms
     input_symptoms = [s.strip().lower() for s in data.symptoms]
 
     try:
@@ -58,11 +56,26 @@ async def predict_disease(data: SymptomInput):
     except Exception as e:
         return {"error": f"Invalid input symptoms: {str(e)}"}
 
-    prediction = model.predict(input_vector)
-    predicted_class_index = np.argmax(prediction)
-    predicted_disease = le.inverse_transform([predicted_class_index])[0]
+    # Get prediction probabilities
+    prediction = model.predict(input_vector)[0]  # 1D array of probabilities
 
-    return {
-        "predicted_disease": predicted_disease,
-        "confidence": float(np.max(prediction))
-    }
+    # Get indices of top 4 predictions
+    top_indices = prediction.argsort()[-4:][::-1]  # descending order
+
+    # Create result list
+    results = []
+    for index in top_indices:
+        disease = le.inverse_transform([index])[0]
+        confidence = float(prediction[index])
+        disease_key = disease.lower().strip()
+        description = desc_dict.get(disease_key, "No description available")
+        precautions = prec_dict.get(disease_key, ["No precautions found"])
+
+        results.append({
+            "name": disease,
+            "confidence": confidence,
+            "description": description,
+            "precautions": precautions
+        })
+
+    return {"predictions": results}
