@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { FaStar } from "react-icons/fa";
+import DoctorDetailsPopup from "./DoctorDetailsPopup"; // Import popup component
 import doctorsData from "./doctorsData";
 
 const DoctorConsult = () => {
   const [filter, setFilter] = useState("");
+  const [selectedDoctor, setSelectedDoctor] = useState(null);
 
   const filteredDoctors = filter
     ? doctorsData.filter((doc) => doc.specialisation === filter)
@@ -11,8 +13,12 @@ const DoctorConsult = () => {
 
   const specialisations = [...new Set(doctorsData.map((doc) => doc.specialisation))];
 
-  const handleSeeTimings = (doctorName) => {
-    alert(`See timings for ${doctorName}`);
+  const handleSeeTimings = (doctor) => {
+    setSelectedDoctor(doctor); // Set the selected doctor
+  };
+
+  const closeModal = () => {
+    setSelectedDoctor(null); // Clear the selected doctor
   };
 
   return (
@@ -61,7 +67,7 @@ const DoctorConsult = () => {
                 ))}
               </div>
               <button
-                onClick={() => handleSeeTimings(doctor.name)}
+                onClick={() => handleSeeTimings(doctor)} // Open popup with doctor info
                 className="mt-4 bg-purple-600 text-white py-2 px-4 rounded-lg shadow hover:bg-purple-700 transition"
               >
                 See All Timings
@@ -70,6 +76,14 @@ const DoctorConsult = () => {
           </div>
         ))}
       </div>
+
+      {/* Render the popup */}
+      {selectedDoctor && (
+        <DoctorDetailsPopup
+          doctor={selectedDoctor}
+          onClose={closeModal} // Pass close function
+        />
+      )}
     </div>
   );
 };
