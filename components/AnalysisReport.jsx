@@ -1,5 +1,5 @@
 
-const AnalysisReport = () => {
+const AnalysisReport = ({prediction,setPrediction}) => {
   const handleOptionClick = (option) => {
     alert(`You selected: ${option}`);
     // Replace with navigation or appropriate logic
@@ -7,6 +7,22 @@ const AnalysisReport = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-purple-50 to-purple-200 p-6">
+      <button onClick={()=>setPrediction(null)}>close </button>
+      <div className="mt-8 bg-purple-100 p-6 rounded-lg shadow-inner text-center">
+            <h3 className="text-xl font-semibold mb-4 text-purple-700">
+              Prediction Result
+            </h3>
+              <>
+                <p className="text-purple-900 text-lg">
+                  <span className="font-semibold">Disease:</span>{" "}
+                  {prediction.predicted_disease}
+                </p>
+                <p className="text-purple-900 text-lg">
+                  <span className="font-semibold">Confidence:</span>{" "}
+                  {(prediction.confidence * 1000).toFixed(2)}%
+                </p>
+              </>
+          </div>
       {/* Main Container */}
       <div className="max-w-xl w-full bg-purple-100 p-8 rounded-3xl shadow-lg border border-purple-300 text-center">
         {/* Icon and Title */}

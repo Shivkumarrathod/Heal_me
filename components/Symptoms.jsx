@@ -1,6 +1,7 @@
 "use client";
-import { symptoms as SYMPTOMS } from "@/utils/disease";
 import { useState } from "react";
+import { symptoms as SYMPTOMS } from "@/utils/disease";
+import AnalysisReport from "./AnalysisReport";
 
 const SymptomAnalysis = () => {
   const [query, setQuery] = useState("");
@@ -58,8 +59,10 @@ const SymptomAnalysis = () => {
     }
   };
 
-  return (
-    <div className="min-h-screen flex items-center justify-center p-6 ">
+  return (<>
+    {prediction ? (<AnalysisReport prediction={prediction} setPrediction={setPrediction}/>):
+    (
+      <div className="min-h-screen flex items-center justify-center p-6 ">
       <div className="max-w-4xl w-full rounded-3xl p-8  ">
         <h2 className="text-3xl font-bold text-purple-700 mb-4 text-center">
           Symptom Analysis
@@ -128,28 +131,11 @@ const SymptomAnalysis = () => {
           <p className="mt-6 text-center text-red-600 font-semibold">{error}</p>
         )}
 
-        {prediction && (
-          <div className="mt-8 bg-purple-100 p-6 rounded-lg shadow-inner text-center">
-            <h3 className="text-xl font-semibold mb-4 text-purple-700">
-              Prediction Result
-            </h3>
-
-            {prediction && (
-              <>
-                <p className="text-purple-900 text-lg">
-                  <span className="font-semibold">Disease:</span>{" "}
-                  {prediction.predicted_disease}
-                </p>
-                <p className="text-purple-900 text-lg">
-                  <span className="font-semibold">Confidence:</span>{" "}
-                  {(prediction.confidence * 1000).toFixed(2)}%
-                </p>
-              </>
-            )}
-          </div>
-        )}
+        
       </div>
-    </div>
+     </div>
+    )}
+    </>
   );
 };
 
