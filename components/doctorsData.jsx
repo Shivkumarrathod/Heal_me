@@ -9,77 +9,97 @@ const doctorsData = [
   address: "Bordowali, Agartala",
   rating: 3,
 },
-
-  {
-    id: 2,
-    imageUri: "https://via.placeholder.com/150",
-    name: "Dr. Arjun Menon",
-    specialisation: "Neurologist",
+ {
+    id: 20,
+    imageUri: "/images/d20.jpg",
+    name: "Dr. Snehal Desai",
+    specialisation: "Pulmonologist",
     experience: "5 years",
-    address: "Indira Nagar, Bangalore",
+    address: "Anna Nagar, Chennai",
     rating: 4,
   },
-  {
-    id: 3,
-    imageUri: "https://via.placeholder.com/150",
-    name: "Dr. Sneha Kapoor",
-    specialisation: "Neurologist",
-    experience: "8 years",
-    address: "South City, Kolkata",
-    rating: 5,
-  },
-  {
-    id: 4,
-    imageUri: "https://via.placeholder.com/150",
-    name: "Dr. Ravi Shah",
-    specialisation: "Neurologist",
-    experience: "10 years",
-    address: "Salt Lake, Kolkata",
-    rating: 5,
-  },
-
-  // Endocrinologists
-  {
-    id: 5,
-    imageUri: "https://via.placeholder.com/150",
-    name: "Dr. Kavita Reddy",
-    specialisation: "Endocrinologist",
-    experience: "4 years",
-    address: "Lake Road, Mumbai",
-    rating: 4,
-  },
-  {
-    id: 6,
-    imageUri: "https://via.placeholder.com/150",
-    name: "Dr. Rajat Singh",
-    specialisation: "Endocrinologist",
-    experience: "6 years",
-    address: "Sector 12, Chandigarh",
-    rating: 5,
-  },
-  {
+   {
     id: 7,
-    imageUri: "https://via.placeholder.com/150",
+    imageUri: "/images/d7.jpg",
     name: "Dr. Neha Vyas",
     specialisation: "Endocrinologist",
     experience: "3 years",
     address: "Civil Lines, Jaipur",
     rating: 3,
   },
+{
+    id: 28,
+    imageUri: "/images/d28.jpg",
+    name: "Dr. Swati Kapoor",
+    specialisation: "Rheumatologist",
+    experience: "6 years",
+    address: "DLF Phase 3, Gurgaon",
+    rating: 4,
+  },
+ 
+  {
+    id: 3,
+    imageUri: "/images/d3.jpg",
+    name: "Dr. Sneha Kapoor",
+    specialisation: "Neurologist",
+    experience: "8 years",
+    address: "South City, Kolkata",
+    rating: 5,
+  },
+ 
+
+  // Endocrinologists
+  {
+    id: 5,
+    imageUri: "/images/d5.jpg",
+    name: "Dr. Kavita Reddy",
+    specialisation: "Endocrinologist",
+    experience: "4 years",
+    address: "Lake Road, Mumbai",
+    rating: 4,
+  },
+   {
+    id: 2,
+    imageUri: "/images/d2.jpg",
+    name: "Dr. Arjun Menon",
+    specialisation: "Neurologist",
+    experience: "5 years",
+    address: "Indira Nagar, Bangalore",
+    rating: 4,
+  },
+ 
+ 
+   {
+    id: 12,
+    imageUri: "/images/d12.jpg",
+    name: "Dr. Meena Joshi",
+    specialisation: "Cardiologist",
+    experience: "10 years",
+    address: "Sector 21, Noida",
+    rating: 5,
+  },
   {
     id: 8,
-    imageUri: "https://via.placeholder.com/150",
+    imageUri: "/images/d8.jpg",
     name: "Dr. Karan Patel",
     specialisation: "Endocrinologist",
     experience: "7 years",
     address: "MG Road, Delhi",
     rating: 4,
   },
-
+ {
+    id: 14,
+    imageUri: "/images/d14.jpg",
+    name: "Dr. Priya Sen",
+    specialisation: "Dermatologist",
+    experience: "5 years",
+    address: "Salt Lake, Kolkata",
+    rating: 4,
+  },
   // Cardiologists
   {
     id: 9,
-    imageUri: "https://via.placeholder.com/150",
+    imageUri: "/images/d9.jpg",
     name: "Dr. Sameer Khanna",
     specialisation: "Cardiologist",
     experience: "7 years",
@@ -88,7 +108,7 @@ const doctorsData = [
   },
   {
     id: 10,
-    imageUri: "https://via.placeholder.com/150",
+    imageUri: "/images/d10.jpg",
     name: "Dr. Sneha Verma",
     specialisation: "Cardiologist",
     experience: "8 years",
@@ -97,45 +117,29 @@ const doctorsData = [
   },
   {
     id: 11,
-    imageUri: "https://via.placeholder.com/150",
+    imageUri: "/images/d11.jpg",
     name: "Dr. Ramesh Iyer",
     specialisation: "Cardiologist",
     experience: "6 years",
     address: "DLF Phase 2, Gurgaon",
     rating: 4,
   },
-  {
-    id: 12,
-    imageUri: "https://via.placeholder.com/150",
-    name: "Dr. Meena Joshi",
-    specialisation: "Cardiologist",
-    experience: "10 years",
-    address: "Sector 21, Noida",
-    rating: 5,
-  },
+ 
 
   // Dermatologists
   {
     id: 13,
-    imageUri: "https://via.placeholder.com/150",
+    imageUri: "/images/d13.jpg",
     name: "Dr. Sunita Paul",
     specialisation: "Dermatologist",
     experience: "6 years",
     address: "MG Road, Bangalore",
     rating: 4,
   },
-  {
-    id: 14,
-    imageUri: "https://via.placeholder.com/150",
-    name: "Dr. Priya Sen",
-    specialisation: "Dermatologist",
-    experience: "5 years",
-    address: "Salt Lake, Kolkata",
-    rating: 4,
-  },
+ 
   {
     id: 15,
-    imageUri: "https://via.placeholder.com/150",
+    imageUri: "/images/d15.jpg",
     name: "Dr. Rahul Gupta",
     specialisation: "Dermatologist",
     experience: "8 years",
@@ -144,7 +148,7 @@ const doctorsData = [
   },
   {
     id: 16,
-    imageUri: "https://via.placeholder.com/150",
+    imageUri: "/images/d16.jpg",
     name: "Dr. Rekha Sharma",
     specialisation: "Dermatologist",
     experience: "3 years",
@@ -155,16 +159,25 @@ const doctorsData = [
   // Pulmonologists
   {
     id: 17,
-    imageUri: "https://via.placeholder.com/150",
+    imageUri: "/images/d17.jpg",
     name: "Dr. Ajay Mehta",
     specialisation: "Pulmonologist",
     experience: "8 years",
     address: "Gariahat, Kolkata",
     rating: 5,
   },
+   {
+    id: 6,
+    imageUri: "/images/d6.jpg",
+    name: "Dr. Rajat Singh",
+    specialisation: "Endocrinologist",
+    experience: "6 years",
+    address: "Sector 12, Chandigarh",
+    rating: 5,
+  },
   {
     id: 18,
-    imageUri: "https://via.placeholder.com/150",
+    imageUri: "/images/d18.jpg",
     name: "Dr. Varun Malhotra",
     specialisation: "Pulmonologist",
     experience: "7 years",
@@ -173,27 +186,18 @@ const doctorsData = [
   },
   {
     id: 19,
-    imageUri: "https://via.placeholder.com/150",
+    imageUri: "/images/d19.jpg",
     name: "Dr. Sheela Rao",
     specialisation: "Pulmonologist",
     experience: "6 years",
     address: "Banjara Hills, Hyderabad",
     rating: 4,
   },
-  {
-    id: 20,
-    imageUri: "https://via.placeholder.com/150",
-    name: "Dr. Snehal Desai",
-    specialisation: "Pulmonologist",
-    experience: "5 years",
-    address: "Anna Nagar, Chennai",
-    rating: 4,
-  },
-
+ 
   // Gastroenterologists
   {
     id: 21,
-    imageUri: "https://via.placeholder.com/150",
+    imageUri: "/images/d21.jpg",
     name: "Dr. Priya Sharma",
     specialisation: "Gastroenterologist",
     experience: "10 years",
@@ -202,7 +206,7 @@ const doctorsData = [
   },
   {
     id: 22,
-    imageUri: "https://via.placeholder.com/150",
+    imageUri: "/images/d29.jpg",
     name: "Dr. Ravi Mehta",
     specialisation: "Gastroenterologist",
     experience: "8 years",
@@ -211,7 +215,7 @@ const doctorsData = [
   },
   {
     id: 23,
-    imageUri: "https://via.placeholder.com/150",
+    imageUri: "/images/d23.jpg",
     name: "Dr. Sneha Kapoor",
     specialisation: "Gastroenterologist",
     experience: "6 years",
@@ -220,7 +224,7 @@ const doctorsData = [
   },
   {
     id: 24,
-    imageUri: "https://via.placeholder.com/150",
+    imageUri: "/images/d24.jpg",
     name: "Dr. Rajat Verma",
     specialisation: "Gastroenterologist",
     experience: "7 years",
@@ -231,16 +235,25 @@ const doctorsData = [
   // Rheumatologists
   {
     id: 25,
-    imageUri: "https://via.placeholder.com/150",
+    imageUri: "/images/d25.jpg",
     name: "Dr. Rohit Sen",
     specialisation: "Rheumatologist",
     experience: "5 years",
     address: "Anna Nagar, Chennai",
     rating: 4,
   },
+   {
+    id: 4,
+    imageUri: "/images/d4.jpg",
+    name: "Dr. Ravi Shah",
+    specialisation: "Neurologist",
+    experience: "10 years",
+    address: "Salt Lake, Kolkata",
+    rating: 5,
+  },
   {
     id: 26,
-    imageUri: "https://via.placeholder.com/150",
+    imageUri: "/images/d26.jpg",
     name: "Dr. Seema Verma",
     specialisation: "Rheumatologist",
     experience: "7 years",
@@ -249,22 +262,14 @@ const doctorsData = [
   },
   {
     id: 27,
-    imageUri: "https://via.placeholder.com/150",
+    imageUri: "/images/d27.jpg",
     name: "Dr. Kunal Patel",
     specialisation: "Rheumatologist",
     experience: "8 years",
     address: "Indira Nagar, Bangalore",
     rating: 4,
   },
-  {
-    id: 28,
-    imageUri: "https://via.placeholder.com/150",
-    name: "Dr. Swati Kapoor",
-    specialisation: "Rheumatologist",
-    experience: "6 years",
-    address: "DLF Phase 3, Gurgaon",
-    rating: 4,
-  },
+  
 ];
 
 export default doctorsData;
